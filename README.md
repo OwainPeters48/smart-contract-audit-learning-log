@@ -10,7 +10,7 @@ Public log of my journey into Web3 security. This repo includes:
 - `/Audits/*` — notes from real audits I read.
 - `/Tools/*` — commands, templates, configs.
 
-## Today’s Progress (YYYY-MM-DD)
+## Today’s Progress (14-08-2025)
 - SWC-101 summary + examples in Remix.
 - Read first 3 pages: Panoptic (C4, Jun 2024) — recorded 6-point finding breakdown.
 - Installed & ran Slither on vulnerable/fixed examples.
