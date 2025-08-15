@@ -1,0 +1,17 @@
+1.  It tracks liquidity in ‘s_poolAssets’ so withdrawals subtract from it and reflect the true pool balance.
+2.  the bug is in ‘CollateralTracker.sol’ → withdraw() function.
+3.  Root cause: Assets are subtracted from ‘s_poolAssets’ in an uncheckled block with no check to ensure ‘s_poolAssets .= assets’
+4.  Why it’s a problem: If ‘s_poolAssets’ is low, subtraction can underflow, wrapping to a huge value.
+5.  Fix: Add a check:
+’if (assets > s_poolAssets) revert Errors.ExceedsMaximumRedemption();’
+6.  Severity Reasoning: Classified Low because no funds can be stolen; only temporary disruption of withdrawal functionality.
+
+When reading an audit, follow these steps:
+1.  Purpose
+2.  Location
+3.  Cause
+4.  Impact
+5.  Fix
+6.  Severity Logic
+
+https://code4rena.com/reports/2024-06-panoptic
