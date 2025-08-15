@@ -8,12 +8,11 @@ Public log of my journey into Web3 security. This repo includes:
 ## Structure
 - `/SWC/*` — one folder per SWC (e.g., SWC-101).
 - `/Audits/*` — notes from real audits I read.
-- `/Tools/*` — commands, templates, configs.
 
 ## Today’s Progress (14-08-2025)
-- SWC-101 summary + examples in Remix.
-- Read first 3 pages: Panoptic (C4, Jun 2024) — recorded 6-point finding breakdown.
-- Installed & ran Slither on vulnerable/fixed examples.
+- SWC-107 summary + examples in Remix.
+- Tested examples using Slither.
+- Read first high severity vulnerability for Blackhole audit — recorded 6-point finding breakdown.
 
 ## Next
 - Add SWC-102.
