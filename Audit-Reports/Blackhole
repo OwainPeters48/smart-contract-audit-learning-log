@@ -1,0 +1,26 @@
+### Blackhole – High Severity Issue
+
+1. The vulnerable function lets the contract owner set the router address, which is used for DEX interactions when launching a GenesisPool.  
+2. Located in `GenesisPoolManager` → `setRouter(address _router)`.  
+3. **Root cause:** The require check wrongly enforces `_router == address(0)`, meaning only the zero address can be set.  
+4. **Why it’s a problem:** This prevents updating to a valid router and can block new pool launches, breaking `_launchPool` if it tries to call a zero-address router.  
+5. **Fix:** Use `require(_router != address(0), "ZA");` so only valid non-zero addresses are allowed.  
+6. **Severity reasoning:** High severity — affects a core protocol function and could temporarily lock liquidity if the router is set to zero.
+
+---
+
+**Notes / Patterns to watch for:**  
+- Require statements that enforce the opposite of intended logic (e.g., `==` instead of `!=`).  
+- Only allow non-zero addresses unless deliberately clearing the router, in which case have a separate `clearRouter()` function.
+
+---
+
+**When reading an audit, follow these steps:**  
+1. Purpose  
+2. Location  
+3. Cause  
+4. Impact  
+5. Fix  
+6. Severity Logic  
+
+🔗 [Full Audit Report – Blackhole (Code4rena)](https://code4rena.com/reports/2025-05-blackhole)
