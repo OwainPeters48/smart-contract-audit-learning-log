@@ -14,6 +14,8 @@ Logic abuse
 
 Always explicitly declare function visibility (external, public, internal, private) to avoid unexpected behavior.
 
+
+
 🔎 Audit Checklist
 
  Does every function explicitly declare visibility?
@@ -21,6 +23,8 @@ Always explicitly declare function visibility (external, public, internal, priva
  Are helper functions restricted with internal or private where possible?
 
  Could any unintended external calls happen?
+
+
 
 📝 Notes
 
