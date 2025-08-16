@@ -1,7 +1,7 @@
 ### Blackhole – High Severity Issue #1
 
-1. The vulnerable function lets the contract owner set the router address, which is used for DEX interactions when launching a GenesisPool.  
-2. Located in `GenesisPoolManager` → `setRouter(address _router)`.  
+1. **Purpose of the contract/function** The vulnerable function lets the contract owner set the router address, which is used for DEX interactions when launching a GenesisPool.  
+2. **Location of the issue** Located in `GenesisPoolManager` → `setRouter(address _router)`.  
 3. **Root cause:** The require check wrongly enforces `_router == address(0)`, meaning only the zero address can be set.  
 4. **Why it’s a problem:** This prevents updating to a valid router and can block new pool launches, breaking `_launchPool` if it tries to call a zero-address router.  
 5. **Fix:** Use `require(_router != address(0), "ZA");` so only valid non-zero addresses are allowed.  
@@ -9,21 +9,32 @@
 
 ---
 
-### Blackhole – High Severity Issue #1
+### Blackhole – High Severity Issue #2
 
-1.  The contract is responsible for creating ‘GaugeCL’ instances for Liquidity pools, which uses the function ‘createGauge’ to create such instance.
-2.  The problem lies in the ‘GaugeFactoryCL.createGauge’.
-3.  There is no access control in the function, so anyone can access it.
-4.  An attacker can repeatedly call the function which will trigger the ‘createEternalFarming’ process, causing the reward token to be transferred to a new pool specified by the attacker, ultimately draining the reward token.
-5.  Implement robust access control on the function, ensuring only authorized administrators or designated smart contracts can access it.
-6.  High severity - Can cause high amounts of funds to be stolen by an attacker.
+1.  **Purpose of the contract/function** The contract is responsible for creating ‘GaugeCL’ instances for Liquidity pools, which uses the function ‘createGauge’ to create such instance.
+2.  **Location of the issue** The problem lies in the ‘GaugeFactoryCL.createGauge’.
+3.  **Root cause:** There is no access control in the function, so anyone can access it.
+4.  **Why it’s a problem:** An attacker can repeatedly call the function which will trigger the ‘createEternalFarming’ process, causing the reward token to be transferred to a new pool specified by the attacker, ultimately draining the reward token.
+5.  **Fix:** Implement robust access control on the function, ensuring only authorized administrators or designated smart contracts can access it.
+6.  **Severity reasoning:** High severity - Can cause high amounts of funds to be stolen by an attacker.
 
 ---
+
+### Blackhole - Medium Severity Issue #1
+
+1.  **Purpose of the contract/function** The RouterV2 contract implements ERC-2612 permit functionality, which uses functions ‘removeLiquidityWithPermit()’ and ‘removeLiquidityETHWithPermit()’ to let users remove liquidity from a pair in a gas-efficient way.
+2.  **Location of the issue** In the RouterV2 contract: RouterV2.sol#L475 - removeLiquidityWithPermit() functionRouterV2.sol#L493 - removeLiquidityETHWithPermit() function.
+3.  **Root cause:** The functions call ‘permit()’ unconditionally and do not handle errors.  ERC-2612 signatures are single-use/nonce-based, so a frontrunner can consume the nonce and make your permit fail.
+4.  **Why it’s a problem:** Attackers can DoS permit-based liquidity removals by front-running and consuming the user’s signature, causing the router call to revert. Users lose gas on failed tx, are forced into extra approve+remove steps, and liquidity removal becomes unreliable under active griefing.
+5.  **Fix:** Wrap the permit handling inside a try-catch block and only revert if both the permit fails and the current allowance is insufficient for the operation.
+6.  **Severity reasoning:** Medium Severity - Financial loses for users, high likelihood.
+
 
 **Notes / Patterns to watch for:**  
 - Require statements that enforce the opposite of intended logic (e.g., `==` instead of `!=`).  
 - Only allow non-zero addresses unless deliberately clearing the router, in which case have a separate `clearRouter()` function.
-
+- Always ensure access control is implemented on functions that mint, deploy, or fund new contracts.
+- Functions that depend on external approval must have fallback checks.
 ---
 
 **When reading an audit, follow these steps:**  
