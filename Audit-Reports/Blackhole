@@ -20,7 +20,7 @@
 
 ---
 
-### Blackhole - Medium Severity Issue #1
+### Blackhole - Medium Severity Issue #10
 
 1.  **Purpose of the contract/function** The RouterV2 contract implements ERC-2612 permit functionality, which uses functions ‘removeLiquidityWithPermit()’ and ‘removeLiquidityETHWithPermit()’ to let users remove liquidity from a pair in a gas-efficient way.
 2.  **Location of the issue** In the RouterV2 contract: RouterV2.sol#L475 - removeLiquidityWithPermit() functionRouterV2.sol#L493 - removeLiquidityETHWithPermit() function.
@@ -29,12 +29,26 @@
 5.  **Fix:** Wrap the permit handling inside a try-catch block and only revert if both the permit fails and the current allowance is insufficient for the operation.
 6.  **Severity reasoning:** Medium Severity - Financial loses for users, high likelihood.
 
+---
+
+### Blackhole – Medium Severity Issue #16  
+
+1.  **Purpose of the contract/function** The `getVotes` function in the `BlackGovernor` contract is meant to check a user’s voting power at a given point in time, so that governance proposals can be created, voted on, and executed within valid windows.  
+2.  **Location of the issue** The problem lies in the `BlackGovernor` contract, specifically inside the `getVotes` function.  
+3.  **Root cause:** The function uses `block.number` instead of `block.timestamp` when determining the point in time for voting power. Since governance relies on time-based windows rather than block height, this mismatch prevents proposals from functioning as intended and leads to a denial of service in the voting process.  
+4.  **Why it’s a problem:** This bug prevents all proposals from being processed or executed correctly, effectively breaking core governance functionality.  
+5.  **Fix:** Change `block.number` to `block.timestamp` to ensure the correct time reference is used. Also, add test coverage simulating proposal start and end times to catch similar mistakes.  
+6.  **Severity reasoning:** Medium severity – breaks governance functionality but does not directly lead to loss of funds.  
+
+---
 
 **Notes / Patterns to watch for:**  
 - Require statements that enforce the opposite of intended logic (e.g., `==` instead of `!=`).  
 - Only allow non-zero addresses unless deliberately clearing the router, in which case have a separate `clearRouter()` function.
 - Always ensure access control is implemented on functions that mint, deploy, or fund new contracts.
 - Functions that depend on external approval must have fallback checks.
+- Be cautious of confusing block properties (`block.number` vs `block.timestamp`).  
+
 ---
 
 **When reading an audit, follow these steps:**  
