@@ -1,4 +1,4 @@
-### Blackhole – High Severity Issue
+### Blackhole – High Severity Issue #1
 
 1. The vulnerable function lets the contract owner set the router address, which is used for DEX interactions when launching a GenesisPool.  
 2. Located in `GenesisPoolManager` → `setRouter(address _router)`.  
@@ -6,6 +6,17 @@
 4. **Why it’s a problem:** This prevents updating to a valid router and can block new pool launches, breaking `_launchPool` if it tries to call a zero-address router.  
 5. **Fix:** Use `require(_router != address(0), "ZA");` so only valid non-zero addresses are allowed.  
 6. **Severity reasoning:** High severity — affects a core protocol function and could temporarily lock liquidity if the router is set to zero.
+
+---
+
+### Blackhole – High Severity Issue #1
+
+1.  The contract is responsible for creating ‘GaugeCL’ instances for Liquidity pools, which uses the function ‘createGauge’ to create such instance.
+2.  The problem lies in the ‘GaugeFactoryCL.createGauge’.
+3.  There is no access control in the function, so anyone can access it.
+4.  An attacker can repeatedly call the function which will trigger the ‘createEternalFarming’ process, causing the reward token to be transferred to a new pool specified by the attacker, ultimately draining the reward token.
+5.  Implement robust access control on the function, ensuring only authorized administrators or designated smart contracts can access it.
+6.  High severity - Can cause high amounts of funds to be stolen by an attacker.
 
 ---
 
