@@ -36,6 +36,23 @@ The purpose is to document my learning process as I practice professional audit 
 
 ---
 
+### 2. [Mock Audit #2 – Lottery Contract (Solidity v0.4.17)]
+- **Target:** Lottery.sol  
+- **Findings:**  
+  - High: Funds locked if manager inactive  
+  - High: Weak randomness (predictable PRNG)  
+  - Medium: State update after external call (CEI violation)  
+  - Medium: Division by zero in `pickWinner()`  
+  - Medium: No limit on entries per address (fairness issue)  
+  - Medium: Unbounded players array (DoS risk)  
+  - Low: Unrestricted ether contributions  
+  - Informational: Player list disclosure via `getPlayers()`  
+  - Informational: Outdated compiler pragma  
+- **Tools:** Manual Review, Slither Analyzer  
+- **Status:** Completed (24 Aug 2025)  
+
+---
+
 ## 🛠️ Methodology
 
 Across all mock audits, I practice the following process:
