@@ -53,6 +53,16 @@ The purpose is to document my learning process as I practice professional audit 
 
 ---
 
+### 3. [Mock Audit #3 – NFT Marketplace (Custom Solidity v0.8.x)]
+- **Target:** NFT.sol, Marketplace.sol  
+- **Findings:**  
+  - Medium: Denial of Service via `.transfer()` to malicious seller  
+  - Medium: CEI violation in `createMarketplaceSale()` enables future reentrancy surface  
+  - Low: Inefficient view functions (gas scalability concerns)  
+  - Informational: Non-constant listing price   
+- **Tools:** Slither, Manual Review, Custom Foundry Tests (DoS PoC)  
+- **Status:** Completed (28 Aug 2025)  
+
 ## 🛠️ Methodology
 
 Across all mock audits, I practice the following process:
