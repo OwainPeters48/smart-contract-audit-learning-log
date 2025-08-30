@@ -61,7 +61,19 @@ The purpose is to document my learning process as I practice professional audit 
   - Low: Inefficient view functions (gas scalability concerns)  
   - Informational: Non-constant listing price   
 - **Tools:** Slither, Manual Review, Custom Foundry Tests (DoS PoC)  
-- **Status:** Completed (28 Aug 2025)  
+- **Status:** Completed (28 Aug 2025)
+
+---
+
+### 4. [Mock Audit #4 – PizzaDrop (Aptos Move Contract)]
+- **Target:** pizza_drop::airdrop.move  
+- **Findings:**  
+  - Medium: Predictable randomness via `timestamp::now_microseconds()` (manipulable outcomes)  
+  - Low: Missing `Funded` event in `fund_pizza_drop` (reduces transparency for off-chain monitoring)  
+- **Tools:** Manual Review (Move), Custom Unit Tests  
+- **Status:** Completed (30 Aug 2025)
+
+---
 
 ## 🛠️ Methodology
 
@@ -69,7 +81,7 @@ Across all mock audits, I practice the following process:
 - Scope & repo setup  
 - Manual review of access control, state management, logic, external calls, and events  
 - Static analysis with [Slither](https://github.com/crytic/slither)  
-- Documentation of findings with severity, PoCs, and recommendations  
+- Documentation of findings with severity, PoCs, and recommendations
 
 ---
 
