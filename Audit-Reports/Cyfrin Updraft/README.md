@@ -16,8 +16,7 @@ The goal is to build real audit experience by reviewing example contracts, writi
   - High- and low-severity findings  
   - Proof of concept tests written in Foundry  
   - Recommendations for mitigation  
-- 👉 [Read the full report here](./PasswordStoreAudit.md)  
-- 📄 [PDF version](./PasswordStoreAudit.pdf)  
+- 📄 [Full Audit Here](./PasswordStoreAudit.pdf)  
 
 ---
 
@@ -31,8 +30,7 @@ The goal is to build real audit experience by reviewing example contracts, writi
   - Medium: DoS/gas scaling from duplicate checks  
   - Low: Ambiguous return in `getActivePlayerIndex`  
   - Informational/Gas: pragma versioning, CEI consistency, avoiding magic numbers  
-- 👉 [Read the full report here](./PuppyRaffleAudit.md)  
-- 📄 [PDF version](./PuppyRaffleAudit.pdf)  
+- 📄 [Full Audit Here](./PuppyRaffleAudit.pdf)  
 
 ---
 
