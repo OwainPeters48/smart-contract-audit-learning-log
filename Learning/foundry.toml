@@ -1,0 +1,9 @@
+[profile.default]
+src = "Weird-ERC"
+test = "Fuzzing/test"
+libs = ["lib"]
+
+remappings = [
+    "forge-std/=lib/forge-std/src/",
+    "weird/=Weird-ERC/"
+]
