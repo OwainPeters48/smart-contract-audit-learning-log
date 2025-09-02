@@ -34,6 +34,38 @@ The goal is to build real audit experience by reviewing example contracts, writi
 
 ---
 
+### 3. T-Swap Audit Report (Module 5)
+
+Target: TSwapPool.sol, PoolFactory.sol
+Focus: Advanced DEX-style audit exploring AMM integrity, fee miscalculations, slippage exploitation, and ERC20 compatibility edge cases.
+
+Findings Summary:
+High-Severity Highlights:
+- Incorrect swap type used in sellPoolTokens, causing mispriced returns
+- Critical miscalculation in fee logic results in overcharging
+- Missing slippage check in swapExactOutput, exposing users to poor trades
+- Invariant x*y=k broken by reward logic in _swap()
+- Deadline parameter in deposit() is never enforced
+
+Medium-Severity:
+- Fee-on-transfer, rebase, and ERC777 tokens break invariant and pool assumptions
+- Non-standard ERC20s lead to silent calculation mismatches
+
+Low-Severity & Informational:
+- Events misordered or missing indexed fields
+- Incorrect return handling, unused errors, and symbolic naming inconsistencies
+- Lack of basic input checks (e.g., zero addresses)
+
+Includes:
+- Full audit report (Markdown & PDF)
+- Foundry-based proof-of-concept tests for every high/medium issue
+- Recommended mitigations written in diff-style format
+- Scope breakdown with CLOC metrics
+- Clear impact analysis and fix strategies for every vulnerability
+📄 **[Full Audit Report](T-SwapAudit.pdf)**
+
+---
+
 ## 🧑‍💻 About Me  
 
 I’m **Owain Peters (aka 0xOwain)**, a Computer Science graduate (Swansea University, 2:1) and aspiring Web3 smart contract auditor.  
