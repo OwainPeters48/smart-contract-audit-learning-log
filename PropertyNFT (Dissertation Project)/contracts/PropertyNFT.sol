@@ -26,7 +26,9 @@ contract PropertyNFT is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable, Acc
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant COMPLIANCE_ROLE = keccak256("COMPLIANCE_ROLE");
 
+    // @audit should be constant
     uint256 public royaltyFee = 500;
+
     address public royaltyRecipient;
     string[] public requiredComplianceTypes;
     
@@ -98,6 +100,7 @@ contract PropertyNFT is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable, Acc
 
     uint256[] private _allTokens;
     function totalSupply() public view override returns (uint256) {
+        // q what is super.?
         return super.totalSupply();
     }
 
