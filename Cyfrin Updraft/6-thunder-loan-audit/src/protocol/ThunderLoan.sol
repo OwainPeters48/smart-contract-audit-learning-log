@@ -161,6 +161,8 @@ contract ThunderLoan is Initializable, OwnableUpgradeable, UUPSUpgradeable, Orac
         assetToken.mint(msg.sender, mintAmount);
         // @audit follow-up, this seems sus
         // q why are we calculating the fees of flash loans in the deposit????
+
+        // @audit-high shouldn't be updating the exchange rate here!!!!
         uint256 calculatedFee = getCalculatedFee(token, amount);
         // q why are we updating the exchange rate????
         assetToken.updateExchangeRate(calculatedFee);
@@ -272,6 +274,10 @@ contract ThunderLoan is Initializable, OwnableUpgradeable, UUPSUpgradeable, Orac
 
     function getCalculatedFee(IERC20 token, uint256 amount) public view returns (uint256 fee) {
         //slither-disable-next-line divide-before-multiply
+
+
+        // @audit IMPACT prices aer wrong -> mediym/high  LIKELIHOOD -> high
+        // @audit-high if the fee is going to be in the token, then the value should reflect that
         uint256 valueOfBorrowedToken = (amount * getPriceInWeth(address(token))) / s_feePrecision;
         //slither-disable-next-line divide-before-multiply
         fee = (valueOfBorrowedToken * s_flashLoanFee) / s_feePrecision;

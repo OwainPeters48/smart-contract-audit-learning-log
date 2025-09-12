@@ -82,6 +82,10 @@ contract AssetToken is ERC20 {
         // q what happens if USDC blacklists the thunderloan contract?
         // q what happens if USDC blacklists the asset token contract?
         // @follow up, weird ERC20s with USDC
+        // @audit-medium the protocol will be frozen, and that would suck
+        // In a privateaudit, good, in a competitive audit: (below)
+        // if a user is denylisted, too bad
+        // if a user is denylisted, and it effects others, this is bad
         i_underlying.safeTransfer(to, amount);
     }
 
