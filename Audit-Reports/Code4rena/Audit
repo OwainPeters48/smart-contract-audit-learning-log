@@ -1,0 +1,70 @@
+### [M-1] `launch()` allows unrestricted token creation, leading to permanent reward pool bloat and potential brand spoofing
+
+**Description:** 
+The `Launchpad` contract exposes a `launch()` function that allows any address to create a new `LaunchToken` without restriction beyond paying the `launchFee`.  Each launch:
+    - Deploys a new token contract
+    - Initialises a bonding curve
+    - Calls `distributer.createRewardsPair()`, which stores a new `RewardPoolData` entry
+    - Mints the full token supply to the Launchpad
+
+There's no access control, rate limiting, or validfation on token names and symbols.  As a result, any user can repeatedly launch tokens like "USDC" or "WETH" and pollute both the on-chain reward system and any off-chain indexers or analytics.
+
+Since `RewardsTrackerStorage.getRewardsPool()` stores reward pool state permanently, repeated launches consume unbounded storage and can degrade performance or inflate gas usage in `addRewards`, `getUserData`, or `claimRewards`.  The protocol has no way to prune or blacklist these launches once deployed.
+
+While each launch costs ETH, there's still a viable griefing vector here - especially if the reward pool or bonding curve systems are expected to scale with the number of live tokens.
+
+**Impact:** 
+A malicious actor can launch an unlimited number of fake tokens using the public `launch()` function.  Each token:
+    - Gets permanently registered in the `_launches` mapping
+    - Creates a new reward pool entry in the `Distributor`
+    - Mints a full supply of tokens to the Launchpad
+    - Can spoof trusted tokens (e.g. "USDC", "WETH") with no validation
+
+While each launch requires paying `launchFee`, the cost may be negligible compared to the long-term consequences:
+    - Reward tracker bloat - `createRewardsPair()` writes to storage that is never cleaned up
+    - Increased gas costs - `addRewards`, `claimRewards`, and `getUserData` loop over or read from these pools
+    - Brand spoofing - tokens can be launched with misleading names/symbols that show up in UIs, risking user confusion
+    - No admin recourse - launched tokens cannot be removed, paused, or blacklisted once created.
+If left unchecked, this could degrade protocol performance and create a poor or unsafe experience for end users and integrators.
+
+**Proof of Concept:**
+The following test demonstrates how a malicious actor can exploit the public `launch()` function to deploy multiple spoofed tokens with misleading names and permanently blot protocol state.
+
+```solidity
+import {LaunchToken} from "contracts/launchpad/LaunchToken.sol";
+
+function test_PoC_MassSpoofedLaunches() public {
+    address attacker = makeAddr("attacker");
+    uint256 fee = launchpad.launchFee();
+
+    vm.deal(attacker, fee * 5);
+    vm.startPrank(attacker);
+
+    for (uint256 i = 0; i < 5; i++) {
+        string memory name = string.concat("FakeUSDC", vm.toString(i));
+        string memory symbol = string.concat("USDC", vm.toString(i));
+        string memory uri = "ipfs://fake";
+
+        address fakeToken = launchpad.launch{value: fee}(name, symbol, uri);
+
+        assertTrue(launchpad.launches(fakeToken).active, "Launch not registered");
+        assertEq(LaunchToken(fakeToken).name(), name, "Name mismatch");
+        assertEq(LaunchToken(fakeToken).symbol(), symbol, "Symbol mismatch");
+    }
+
+    vm.stopPrank();
+}
+```
+
+To reproduce this issue, insert the function above into the `PoCLaunchpad.t.sol` file and run:
+```bash
+forge test --match-path test/c4-poc/PoCLaunchpad.t.sol --match-test test_PoC_MassSpoofedLaunches
+```
+
+If successful, all five spoofed tokens will be permanently registered in the protocol's `launches` mapping, with names and symbols mimicking a trusted asset (`USDC`, in this case).  This confirms there are no safeguards against reward pool spam or token impersonation.
+
+**Recommended Mitigation:** 
+Introduce basic validation and access controls to limit malicious or excessive usage of `launch()`:
+    - Name/symbol filtering: reject launches with duplicate or blacklisted names/symbols (e.g., "USDC", "ETH").
+    - Rate-limiting: Add cooldown per address (e.g., one launch per X blocks).
+    - Admin moderation: Add the ability to pause, remove launches flagged as malicious/spam.
