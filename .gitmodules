@@ -1,0 +1,12 @@
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Coding/staking/lib/forge-std"]
+	path = Coding/staking/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Coding/staking/lib/openzeppelin-contracts"]
+	path = Coding/staking/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Learning/Reentrancy Deep Dive/fallback-playground/lib/forge-std"]
+	path = Learning/Reentrancy Deep Dive/fallback-playground/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
